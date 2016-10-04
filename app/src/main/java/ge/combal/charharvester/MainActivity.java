@@ -1,13 +1,18 @@
 package ge.combal.charharvester;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
 		mPaint.setStrokeWidth(12);
 
-		nextChar();
+		labelView.setText(LabelGenerator.getNext());
 
 		Button nextBtn = (Button) findViewById(R.id.next);
 		Button resetBtn = (Button) findViewById(R.id.reset);
@@ -48,14 +53,48 @@ public class MainActivity extends AppCompatActivity {
 		nextBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				dv.clean();
 				nextChar();
 			}
 		});
 	}
 
 	private void nextChar(){
-		// TODO: 10/3/16 save image
-		labelView.setText(LabelGenerator.next());
+
+		if(!isConnectedToInternet()) {
+			showToast("No Internet Connection");
+			return ;
+		}
+
+		if(!dv.isDirty()){
+			return;
+		}
+
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			dv.writeTo(baos);
+			System.out.println("baos size is : " + baos.size());
+			SendImageTask task = new SendImageTask(this, LabelGenerator.getCurrent(), baos);
+			task.execute();
+
+			labelView.setText(LabelGenerator.getNext());
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		dv.clean();
+	}
+
+	public boolean isConnectedToInternet(){
+		ConnectivityManager conMgr = (ConnectivityManager) getSystemService (Context.CONNECTIVITY_SERVICE);
+		if (conMgr.getActiveNetworkInfo() != null
+				&& conMgr.getActiveNetworkInfo().isAvailable()
+				&& conMgr.getActiveNetworkInfo().isConnected()) {
+
+			return true;
+		}
+		return false;
+	}
+
+	public void showToast(String msg){
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 }

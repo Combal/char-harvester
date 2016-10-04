@@ -5,16 +5,21 @@ package ge.combal.charharvester;
  */
 
 public class LabelGenerator {
-
+	private static String current;
 	protected static String[] ALPHABET = {"ა", "ბ", "გ", "დ", "ე", "ვ", "ზ", "თ", "ი", "კ", "ლ", "მ", "ნ", "ო",
 			"პ", "ჟ", "რ", "ს", "ტ", "უ", "ფ", "ქ", "ღ", "ყ", "შ", "ჩ", "ც", "ძ", "წ", "ჭ", "ხ", "ჯ", "ჰ"};
 
-	public static String next() {
+	public static String getNext() {
 		int ind =  (int)(Math.random() * ALPHABET.length);
-		return ALPHABET[ind];
+		current = ALPHABET[ind];
+		return current;
+	}
+
+	public static String getCurrent(){
+		return current;
 	}
 
 	public static void main(String[] args) {
-		System.out.println(next());
+		System.out.println(getNext());
 	}
 }

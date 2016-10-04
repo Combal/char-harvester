@@ -9,6 +9,8 @@ import android.graphics.Path;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.OutputStream;
+
 /**
  * Created by vano on 10/3/16.
  */
@@ -24,6 +26,7 @@ public class DrawingView extends View {
 	private Paint circlePaint;
 	private Path circlePath;
 	private Paint mPaint;
+	private static boolean dirty = false;
 
 	public DrawingView(Context c, Paint mPaint) {
 		super(c);
@@ -43,8 +46,7 @@ public class DrawingView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-
-		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(mBitmap);
 		clean();
 	}
@@ -52,7 +54,6 @@ public class DrawingView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-
 		canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
 		canvas.drawPath(mPath, mPaint);
 		canvas.drawPath(circlePath, circlePaint);
@@ -99,6 +100,7 @@ public class DrawingView extends View {
 			case MotionEvent.ACTION_DOWN:
 				touch_start(x, y);
 				invalidate();
+				dirty = true;
 				break;
 			case MotionEvent.ACTION_MOVE:
 				touch_move(x, y);
@@ -115,5 +117,20 @@ public class DrawingView extends View {
 	public void clean(){
 		mCanvas.drawColor(Color.WHITE);
 		this.requestLayout();
+		dirty = false;
+	}
+
+	public Bitmap getBitmap(){
+		return this.mBitmap;
+	}
+
+	public void writeTo(OutputStream os){
+		if(mBitmap == null) return ;
+		mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+	}
+
+	@Override
+	public boolean isDirty() {
+		return dirty;
 	}
 }
