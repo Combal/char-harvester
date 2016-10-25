@@ -15,7 +15,7 @@ import java.net.URL;
 
 public class SendImageTask extends AsyncTask<String, Void, Integer> {
 
-	private static final String HOST = "combal.ge";
+	private static final String HOST = "vano.dsl.ge";
 	private ByteArrayOutputStream baos;
 	private String label;
 	private Context context;

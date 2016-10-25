@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
 	DrawingView dv;
 	TextView labelView;
 	LinearLayout linearLayout;
+	LinearLayout labelLayout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		linearLayout = (LinearLayout) findViewById(R.id.drawingContainer);
 		labelView = (TextView) findViewById(R.id.label);
+		labelLayout = (LinearLayout) findViewById(R.id.labelLayout);
 
 		mPaint = new Paint();
 		dv = new DrawingView(this, mPaint);
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeJoin(Paint.Join.ROUND);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
-		mPaint.setStrokeWidth(12);
+		mPaint.setStrokeWidth(32);
 
 		labelView.setText(LabelGenerator.getNext());
 
@@ -75,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
 			System.out.println("baos size is : " + baos.size());
 			SendImageTask task = new SendImageTask(this, LabelGenerator.getCurrent(), baos);
 			task.execute();
-
 			labelView.setText(LabelGenerator.getNext());
+			labelLayout.setBackgroundColor(nextColor());
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -96,5 +99,11 @@ public class MainActivity extends AppCompatActivity {
 
 	public void showToast(String msg){
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+	}
+
+	private int nextColor(){
+		Random rnd = new Random();
+		int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+		return color;
 	}
 }
