@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
 			SendImageTask task = new SendImageTask(this, LabelGenerator.getCurrent(), baos);
 			task.execute();
 			labelView.setText(LabelGenerator.getNext());
-			labelLayout.setBackgroundColor(nextColor());
+			int[] colors = nextColor();
+			labelLayout.setBackgroundColor(colors[0]);
+			labelView.setTextColor(colors[1]);
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -101,9 +103,18 @@ public class MainActivity extends AppCompatActivity {
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 
-	private int nextColor(){
+	private int[] nextColor(){
 		Random rnd = new Random();
-		int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-		return color;
+		int r = rnd.nextInt(256);
+		int g = rnd.nextInt(256);
+		int b = rnd.nextInt(256);
+		int threshold = 130;
+		System.out.println("r: " + r + ", g: " + g + ", b: " + b);
+		int textColor = Color.BLACK;
+		if(r < threshold && g < threshold && b < threshold){
+			textColor = Color.WHITE;
+		}
+		int[] colors = {Color.argb(255, r, g, b), textColor};
+		return colors;
 	}
 }

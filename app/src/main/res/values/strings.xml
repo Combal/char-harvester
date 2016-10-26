@@ -1,3 +1,5 @@
 <resources>
-	<string name="app_name">Char Harvester</string>
+	<string name="app_name">ხელნაწერი ასოები</string>
+	<string name="next">შემდეგი</string>
+	<string name="reset">გასუფთ.</string>
 </resources>
